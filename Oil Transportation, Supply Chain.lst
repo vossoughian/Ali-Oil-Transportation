@@ -1,0 +1,276 @@
+GAMS 28.2.0  r750fa45 Released Aug 19, 2019 WEX-WEI x86 64bit/MS Windows - 10/28/19 08:14:00 Page 1
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+   1  Set
+   2   
+   3      i "oil resources"    /A,B/
+   4      j "refineris"        /S,T/
+   5      K "customers"        /1,2,3/;
+   6   
+   7  Parameter
+   8   
+   9      D(k)    "Demand of custumers"             /1 600,2 400,3  700/
+  10      cap(i)  "Capacity of resources"           /A 1000, B 900/;
+  11   
+  12  table
+  13  c(i,j)  "cost of transportation between resources and refineries"
+  14          S   T
+  15      A   2   5
+  16      B   7   4;
+  17   
+  18  table
+  19  cp (j,k) "Cost of transportation between refineries and customers"
+  20          1   2   3
+  21      S   3   4   7
+  22      T   2   5   3;
+  23   
+  24  Variable
+  25      Z;
+  26   
+  27  Positive variable
+  28      X(i,j)  "integer variable",
+  29      Y(j,k)  "integer variable";
+  30   
+  31  Equations
+  32   
+  33      objectivefunction
+  34      co1(k)
+  35      co2(i)
+  36      co3(j);
+  37   
+  38      objectivefunction.. Z =e= sum((i,j),X(i,j)*c(i,j)) + sum((j,k),Y(j,k)*cp(j,k));
+  39      co1(k).. sum(j,Y(j,k)) =g= D(k);
+  40      co2(i)            .. sum(j,X(i,j)) =l= cap(i);
+  41      co3(j)            .. sum(i,X(i,j)) =g= sum(k,Y(j,k));
+  42   
+  43  model   supplychain /all/;
+  44   
+  45  solve   supplychain using LP minimizing Z;
+  46   
+  47  display Z.l, X.l, Y.l;
+
+
+COMPILATION TIME     =        0.000 SECONDS      3 MB  28.2.0 r750fa45 WEX-WEI
+GAMS 28.2.0  r750fa45 Released Aug 19, 2019 WEX-WEI x86 64bit/MS Windows - 10/28/19 08:14:00 Page 2
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Equation Listing    SOLVE supplychain Using LP From line 45
+
+
+---- objectivefunction  =E=  
+
+objectivefunction..  Z - 2*X(A,S) - 5*X(A,T) - 7*X(B,S) - 4*X(B,T) - 3*Y(S,1) - 4*Y(S,2) - 7*Y(S,3) - 2*Y(T,1) - 5*Y(T,2) - 3*Y(T,3) =E= 0 ; (LHS = 0)
+     
+
+---- co1  =G=  
+
+co1(1)..  Y(S,1) + Y(T,1) =G= 600 ; (LHS = 0, INFES = 600 ****)
+     
+co1(2)..  Y(S,2) + Y(T,2) =G= 400 ; (LHS = 0, INFES = 400 ****)
+     
+co1(3)..  Y(S,3) + Y(T,3) =G= 700 ; (LHS = 0, INFES = 700 ****)
+     
+
+---- co2  =L=  
+
+co2(A)..  X(A,S) + X(A,T) =L= 1000 ; (LHS = 0)
+     
+co2(B)..  X(B,S) + X(B,T) =L= 900 ; (LHS = 0)
+     
+
+---- co3  =G=  
+
+co3(S)..  X(A,S) + X(B,S) - Y(S,1) - Y(S,2) - Y(S,3) =G= 0 ; (LHS = 0)
+     
+co3(T)..  X(A,T) + X(B,T) - Y(T,1) - Y(T,2) - Y(T,3) =G= 0 ; (LHS = 0)
+     
+GAMS 28.2.0  r750fa45 Released Aug 19, 2019 WEX-WEI x86 64bit/MS Windows - 10/28/19 08:14:00 Page 3
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Column Listing      SOLVE supplychain Using LP From line 45
+
+
+---- Z  
+
+Z
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        1       objectivefunction
+
+
+---- X  integer variable
+
+X(A,S)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+       -2       objectivefunction
+        1       co2(A)
+        1       co3(S)
+
+X(A,T)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+       -5       objectivefunction
+        1       co2(A)
+        1       co3(T)
+
+X(B,S)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+       -7       objectivefunction
+        1       co2(B)
+        1       co3(S)
+
+REMAINING ENTRY SKIPPED
+
+---- Y  integer variable
+
+Y(S,1)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+       -3       objectivefunction
+        1       co1(1)
+       -1       co3(S)
+
+Y(S,2)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+       -4       objectivefunction
+        1       co1(2)
+       -1       co3(S)
+
+Y(S,3)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+       -7       objectivefunction
+        1       co1(3)
+       -1       co3(S)
+
+REMAINING 3 ENTRIES SKIPPED
+GAMS 28.2.0  r750fa45 Released Aug 19, 2019 WEX-WEI x86 64bit/MS Windows - 10/28/19 08:14:00 Page 4
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Model Statistics    SOLVE supplychain Using LP From line 45
+
+
+MODEL STATISTICS
+
+BLOCKS OF EQUATIONS           4     SINGLE EQUATIONS            8
+BLOCKS OF VARIABLES           3     SINGLE VARIABLES           11
+NON ZERO ELEMENTS            31
+
+
+GENERATION TIME      =        0.032 SECONDS      4 MB  28.2.0 r750fa45 WEX-WEI
+
+
+EXECUTION TIME       =        0.032 SECONDS      4 MB  28.2.0 r750fa45 WEX-WEI
+GAMS 28.2.0  r750fa45 Released Aug 19, 2019 WEX-WEI x86 64bit/MS Windows - 10/28/19 08:14:00 Page 5
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Solution Report     SOLVE supplychain Using LP From line 45
+
+
+               S O L V E      S U M M A R Y
+
+     MODEL   supplychain         OBJECTIVE  Z
+     TYPE    LP                  DIRECTION  MINIMIZE
+     SOLVER  CPLEX               FROM LINE  45
+
+**** SOLVER STATUS     1 Normal Completion         
+**** MODEL STATUS      1 Optimal                   
+**** OBJECTIVE VALUE            10300.0000
+
+ RESOURCE USAGE, LIMIT          0.015      1000.000
+ ITERATION COUNT, LIMIT         6    2000000000
+
+IBM ILOG CPLEX   28.2.0 r750fa45 Released Aug 19, 2019 WEI x86 64bit/MS Window
+Cplex 12.9.0.0
+
+Space for names approximately 0.00 Mb
+Use option 'names no' to turn use of names off
+LP status(1): optimal
+Cplex Time: 0.00sec (det. 0.02 ticks)
+Optimal solution found.
+Objective :       10300.000000
+
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+---- EQU objective~          .              .              .             1.0000      
+
+---- EQU co1  
+
+         LOWER          LEVEL          UPPER         MARGINAL
+
+1       600.0000       600.0000        +INF            5.0000      
+2       400.0000       400.0000        +INF            6.0000      
+3       700.0000       700.0000        +INF            7.0000      
+
+---- EQU co2  
+
+         LOWER          LEVEL          UPPER         MARGINAL
+
+A        -INF         1000.0000      1000.0000          .          
+B        -INF          700.0000       900.0000          .          
+
+---- EQU co3  
+
+         LOWER          LEVEL          UPPER         MARGINAL
+
+S          .              .            +INF            2.0000      
+T          .              .            +INF            4.0000      
+
+                           LOWER          LEVEL          UPPER         MARGINAL
+
+---- VAR Z                 -INF        10300.0000        +INF             .          
+
+---- VAR X  integer variable
+
+           LOWER          LEVEL          UPPER         MARGINAL
+
+A.S          .          1000.0000        +INF             .          
+A.T          .              .            +INF            1.0000      
+B.S          .              .            +INF            5.0000      
+B.T          .           700.0000        +INF             .          
+
+---- VAR Y  integer variable
+
+           LOWER          LEVEL          UPPER         MARGINAL
+
+S.1          .           600.0000        +INF             .          
+S.2          .           400.0000        +INF             .          
+S.3          .              .            +INF            2.0000      
+T.1          .              .            +INF            1.0000      
+T.2          .              .            +INF            3.0000      
+T.3          .           700.0000        +INF             .          
+
+
+**** REPORT SUMMARY :        0     NONOPT
+                             0 INFEASIBLE
+                             0  UNBOUNDED
+GAMS 28.2.0  r750fa45 Released Aug 19, 2019 WEX-WEI x86 64bit/MS Windows - 10/28/19 08:14:00 Page 6
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+E x e c u t i o n
+
+
+----     47 VARIABLE Z.L                   =    10300.000  
+
+----     47 VARIABLE X.L  integer variable
+
+            S           T
+
+A    1000.000
+B                 700.000
+
+
+----     47 VARIABLE Y.L  integer variable
+
+            1           2           3
+
+S     600.000     400.000
+T                             700.000
+
+
+
+EXECUTION TIME       =        0.000 SECONDS      3 MB  28.2.0 r750fa45 WEX-WEI
+
+
+USER: GAMS Development Corporation, USA              G871201/0000CA-ANY
+      Free Demo, +1 202-342-0180, support@gams.com, www.gams.com DC0000
+
+
+**** FILE SUMMARY
+
+Input      C:\Users\avoss\Documents\GAMSStudio\workspace\Oil Transportation, Supply Chain.gms
+Output     C:\Users\avoss\Documents\GAMSStudio\workspace\Oil Transportation, Supply Chain.lst
